@@ -112,7 +112,7 @@ router.put("/password", function(request, response) {
                 console.log(error);
                 response.status(500).json({ status: 500, error: "DataBase error : " + error });
             } else {
-                response.status(202).json({ status: 200, description: "Password update" })
+                response.status(200).json({ status: 200, description: "Password update" })
             }
         })
     } catch (err) {
@@ -141,5 +141,23 @@ router.post("/login", function(request, response) {
     }
 })
 
+//DON'T NEED TOKEN
+router.get("/getAlergen", function(request, response) {
+    try {
+        db.getallergens(function(error, answer) {
+            if (error) {
+                console.log(error);
+                response.status(500).json({ status: 500, error: "DataBase error : " + error });
+            } else {
+                response.status(200).json(answer)
+            }
+        })
+    } catch (err) {
+        switch (err) {
+            default: response.status(500).json({ status: 500, error: "Unexpected error : " + err })
+            break;
+        }
+    }
+})
 
 module.exports = router

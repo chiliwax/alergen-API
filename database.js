@@ -75,3 +75,12 @@ exports.updatePassword = function(username, password, callback) {
         }
     })
 }
+
+//GET stuffs
+
+exports.getallergens = function(callback) {
+    query = "SELECT * FROM allergen"
+    db.all(query, function(error, answer) {
+        if (error) { callback(error) } else { callback(null, answer) }
+    })
+}
