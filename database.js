@@ -1,5 +1,4 @@
 const sqlite = require('sqlite3')
-const bcrypt = require('bcryptjs')
 const db = new sqlite.Database("database.db")
 
 //DB INITIALISATION

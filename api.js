@@ -133,7 +133,6 @@ router.put("/password", function(request, response) {
 
 //DON'T NEED TOKEN (GENERATE IT)
 router.post("/login", function(request, response) {
-    console.log("do something here")
     try {
 
     } catch (e) {
@@ -159,5 +158,6 @@ router.get("/getAlergen", function(request, response) {
         }
     }
 })
+
 
 module.exports = router
