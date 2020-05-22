@@ -11,6 +11,25 @@ CREATE TABLE IF NOT EXISTS account(
 )
 `)
 
+db.run(`
+CREATE TABLE IF NOT EXISTS allergen(
+    id INTEGER PRIMARY KEY NOT NULL UNIQUE,
+    englishname TEXT NOT NULL UNIQUE,
+    description TEXT UNIQUE,
+    link TEXT,
+    swedishname TEXT,
+    frenchname TEXT
+)
+`)
+
+db.run(`
+CREATE TABLE IF NOT EXISTS userallergen(
+    id INTEGER PRIMARY KEY NOT NULL UNIQUE,
+    username TEXT NOT NULL,
+    alergen TEXT NOT NULL
+)
+`)
+
 //Account
 exports.createAccount = function(username, password, callback) {
     const query = "INSERT INTO account (username, password) VALUES(?,?)"
