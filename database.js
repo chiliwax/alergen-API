@@ -1,7 +1,6 @@
 const sqlite = require('sqlite3')
 const db = new sqlite.Database("database.db")
-
-//DB INITIALISATION
+    //DB INITIALISATION
 db.run(`
 CREATE TABLE IF NOT EXISTS account(
     id INTEGER PRIMARY KEY NOT NULL UNIQUE,
