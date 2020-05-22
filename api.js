@@ -5,8 +5,9 @@ const jwt = require('jsonwebtoken')
 
 const router = express.Router()
 
-//testDB
+//ACCOUNT
 
+//DONT NEED TOKEN
 router.post("/register", function(request, response) {
     try {
         const username = request.body.username;
@@ -48,6 +49,7 @@ router.post("/register", function(request, response) {
 
 })
 
+//NEED TOKEN
 router.delete("/account", function(request, response) {
     try {
         const username = request.body.username;
@@ -67,6 +69,7 @@ router.delete("/account", function(request, response) {
     }
 })
 
+//NEED TOKEN
 router.put("/account", function(request, response) {
     try {
         const old_username = request.body.old_username;
@@ -95,6 +98,7 @@ router.put("/account", function(request, response) {
     }
 })
 
+//NEED TOKEN
 router.put("/password", function(request, response) {
     try {
         const username = request.body.username;
@@ -126,8 +130,8 @@ router.put("/password", function(request, response) {
     }
 })
 
-//WithoutPasswordRequests
 
+//DON'T NEED TOKEN (GENERATE IT)
 router.post("/login", function(request, response) {
     console.log("do something here")
     try {
@@ -136,8 +140,6 @@ router.post("/login", function(request, response) {
 
     }
 })
-
-//Requests with Password
 
 
 module.exports = router
