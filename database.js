@@ -7,7 +7,17 @@ db.run(`
 CREATE TABLE IF NOT EXISTS account(
     id INTEGER PRIMARY KEY NOT NULL UNIQUE,
     username TEXT NOT NULL UNIQUE,
-    password TEXT NOT NULL
+    password TEXT NOT NULL,
+    userphoto
+)
+`)
+
+db.run(`
+CREATE TABLE IF NOT EXISTS product(
+    id INTEGER PRIMARY KEY NOT NULL UNIQUE,
+    productcode TEXT NOT NULL UNIQUE,
+    productname TEXT NOT NULL,
+    productphoto
 )
 `)
 
@@ -26,6 +36,14 @@ db.run(`
 CREATE TABLE IF NOT EXISTS userallergen(
     id INTEGER PRIMARY KEY NOT NULL UNIQUE,
     username TEXT NOT NULL,
+    alergen TEXT NOT NULL
+)
+`)
+
+db.run(`
+CREATE TABLE IF NOT EXISTS productallergen(
+    id INTEGER PRIMARY KEY NOT NULL UNIQUE,
+    productcode TEXT NOT NULL,
     alergen TEXT NOT NULL
 )
 `)
