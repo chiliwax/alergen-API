@@ -2,8 +2,19 @@ const express = require('express')
 const db = require('./database')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const config = require('./config.json');
 
 const router = express.Router()
+
+//TOOLS
+
+function TokenVerification(request, username) {
+    const authorizationHeader = request.header("authorization")
+    const accessToken = authorizationHeader.substring("Bearer ".length)
+    const payload = jwt.verify(accessToken, config.secret)
+    if (payload.usernameAccount != username) { return false }
+    return true
+}
 
 //ACCOUNT
 
@@ -53,6 +64,10 @@ router.post("/register", function(request, response) {
 router.delete("/account", function(request, response) {
     try {
         const username = request.body.username;
+        if (!username || username === "") { throw "emptyUsername" }
+        //AUTHORIZATION HEADER CHECK
+        if (!TokenVerification(request, username)) { throw "invalid user" }
+        //HEADER CHECK
         db.deleteAccount(username, function(error) {
             if (error) {
                 console.log(error);
@@ -63,8 +78,15 @@ router.delete("/account", function(request, response) {
         })
     } catch (err) {
         switch (err) {
-            default: response.status(500).json({ status: 500, error: "Unexpected error : " + err })
-            break;
+            case "emptyUsername":
+                response.status(401).json({ status: 401, error: "Empty username " + err })
+                break;
+            case "invalid user":
+                response.status(401).json({ status: 401, error: "invalid user " + err })
+                break;
+            default:
+                response.status(500).json({ status: 500, error: "Unexpected error : " + err })
+                break;
         }
     }
 })
@@ -74,6 +96,9 @@ router.put("/account", function(request, response) {
     try {
         const old_username = request.body.old_username;
         const new_username = request.body.new_username;
+        //AUTHORIZATION HEADER CHECK
+        if (!TokenVerification(request, old_username)) { throw "invalid user" }
+        //HEADER CHECK
         const checkEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/ //email format
         if (!checkEmail.test(new_username)) { throw "username" }
 
@@ -87,6 +112,9 @@ router.put("/account", function(request, response) {
         })
     } catch (err) {
         switch (err) {
+            case "invalid user":
+                response.status(401).json({ status: 401, error: "invalid user " + err })
+                break;
             case 'username':
                 response.status(400).json({ status: 400, error: "Bad Email format" })
                 break;
@@ -103,6 +131,9 @@ router.put("/password", function(request, response) {
     try {
         const username = request.body.username;
         const password = request.body.password;
+        //AUTHORIZATION HEADER CHECK
+        if (!TokenVerification(request, username)) { throw "invalid user" }
+        //HEADER CHECK
         const checkPassword = /([a-zA-Z]|[0-9]){8,15}$/ //Password  8 to 15 length letter and digit
         if (!checkPassword.test(password)) { throw "password" }
         let hash = bcrypt.hashSync(password, 10)
@@ -117,6 +148,9 @@ router.put("/password", function(request, response) {
         })
     } catch (err) {
         switch (err) {
+            case "invalid user":
+                response.status(401).json({ status: 401, error: "invalid user " + err })
+                break;
             case 'password':
                 response.status(400).json({ status: 400, error: "Bad password format" })
                 break;
@@ -134,9 +168,29 @@ router.put("/password", function(request, response) {
 //DON'T NEED TOKEN (GENERATE IT)
 router.post("/login", function(request, response) {
     try {
+        const username = request.body.username;
+        const password = request.body.password;
+        db.login(username, password, function(error) {
+            if (error) {
+                console.log(error);
+                response.status(500).json({ status: 500, error: "DataBase error : " + error });
+            } else {
 
-    } catch (e) {
+                const accessToken = jwt.sign({
+                    usernameAccount: username
+                }, config.secret)
 
+                response.status(200).json({
+                    access_token: accessToken,
+                    token_type: "Bearer"
+                })
+            }
+        })
+    } catch (err) {
+        switch (err) {
+            default: response.status(500).json({ status: 500, error: "Unexpected error : " + err })
+            break;
+        }
     }
 })
 

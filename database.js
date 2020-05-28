@@ -1,5 +1,6 @@
 const sqlite = require('sqlite3')
 const db = new sqlite.Database("database.db")
+const bcrypt = require('bcryptjs')
     //DB INITIALISATION
 db.run(`
 CREATE TABLE IF NOT EXISTS account(
@@ -52,6 +53,24 @@ exports.createAccount = function(username, password, callback) {
     const values = [username, password]
     db.run(query, values, function(error) {
         if (error) { callback(error) } else { callback(null) }
+    })
+}
+
+exports.login = function(username, password, callback) {
+    const query = "SELECT * FROM account WHERE account.username = ?"
+    const values = [username]
+
+    db.get(query, values, function(error, answer) {
+        if (error || !answer) {
+            callback(username + " Database error.")
+        } else {
+
+            if (bcrypt.compareSync(password, answer.password)) {
+                callback(null, answer)
+            } else {
+                callback("Wrong password")
+            }
+        }
     })
 }
 

@@ -2,10 +2,15 @@ var express = require('express');
 var app = express();
 const apiRouter = require('./api')
 const bodyParser = require('body-parser')
+const jwt = require('./_helpers/jwt');
 
 //SET MIDDLEWARE
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+    extended: true
+}))
+app.use(jwt())
 
 //SET ROUTER(S)
 app.use("/api", apiRouter);
